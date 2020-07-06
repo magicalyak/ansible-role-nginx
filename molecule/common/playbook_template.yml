@@ -6,6 +6,13 @@
   vars:
     nginx_debug_output: true
 
+    nginx_service_modify: true
+    nginx_service_timeout: 95
+    nginx_selinux: true
+    nginx_selinux_tcp_ports:
+      - 80
+      - 443
+
     nginx_main_template_enable: true
     nginx_main_template:
       template_file: nginx.conf.j2
@@ -13,6 +20,7 @@
       conf_file_location: /etc/nginx/
       user: nginx
       worker_processes: auto
+      pid: /var/run/nginx.pid
       error_log:
         location: /var/log/nginx/error.log
         level: warn
@@ -43,9 +51,16 @@
         - master_process on;
       http_custom_options:
         - aio off;
+      http_custom_includes:
+        - "/etc/nginx/sites-enabled/*.conf"
       events_custom_options:
         - accept_mutex off;
       stream_enable: true
+
+    nginx_status_enable: true
+    nginx_status_location: /etc/nginx/conf.d/stub_status.conf
+    nginx_status_port: 8080
+    nginx_status_log: true
 
     nginx_http_template_enable: true
     nginx_http_template:
@@ -62,6 +77,8 @@
                 opts:
                   - default_server
             server_name: localhost
+            http_error_pages:
+              404: /404.html
             error_page: /usr/share/nginx/html
             client_max_body_size: 512k
             proxy_hide_headers:
@@ -225,6 +242,10 @@
                 address: unix:/var/run/control.unit.sock
                 weight: 1
                 health_check: max_fails=3 fail_timeout=5s
+              backend_server_3:
+                address: 0.0.0.0
+                port: 8083
+                down: true
       frontend:
         template_file: http/default.conf.j2
         conf_file_name: frontend_default.conf
@@ -361,3 +382,7 @@
                 port: 8091
                 weight: 1
                 health_check: max_fails=1 fail_timeout=10s
+              backend_server_2:
+                address: 0.0.0.0
+                port: 8092
+                down: true
