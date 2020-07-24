@@ -4,7 +4,8 @@
     name: policycoreutils-python, setools
     state: present
   when:
-    - ansible_os_family == "RedHat" and not ansible_distribution_major_version == "8"
+    - not ansible_os_family == "RedHat"
+    - not ansible_distribution_major_version == "8"
 
 - name: "(Setup: SELinux) Install Required RHEL8 Dependencies"
   package:
@@ -55,7 +56,11 @@
     proto: tcp
     setype: http_port_t
     state: present
+<<<<<<< HEAD
   when: nginx_rest_api_port is defined"
+=======
+  when: nginx_rest_api_port is defined
+>>>>>>> upstream/master
 
 - name: "(Setup: SELinux: Ports) Allow Specific TCP Ports"
   seport:

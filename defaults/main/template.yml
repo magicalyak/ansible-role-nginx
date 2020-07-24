@@ -75,8 +75,24 @@ nginx_http_template:
             port: 8081
             ssl: true
             opts: []  # Listen opts like http2 which will be added (ssl is automatically added if you specify 'ssl:').
+        ssl:
+          cert: /etc/ssl/certs/default.crt
+          key: /etc/ssl/private/default.key
+          dhparam: /etc/ssl/private/dh_param.pem
+          protocols: TLSv1 TLSv1.1 TLSv1.2
+          ciphers: HIGH:!aNULL:!MD5
+          prefer_server_ciphers: true
+          session_cache: none
+          session_timeout: 5m
+          disable_session_tickets: false
+          trusted_cert: /etc/ssl/certs/root_CA_cert_plus_intermediates.crt
+          stapling: true
+          stapling_verify: true
+          buffer_size: 16k
+          ecdh_curve: auto
         server_name: localhost
         include_files: []
+        http_error_pages: {}
         error_page: /usr/share/nginx/html
         access_log:
           - name: main
@@ -105,21 +121,7 @@ nginx_http_template:
           #   name: Header-X
           #   value: Value-X
           #   always: false
-        ssl:
-          cert: /etc/ssl/certs/default.crt
-          key: /etc/ssl/private/default.key
-          dhparam: /etc/ssl/private/dh_param.pem
-          protocols: TLSv1 TLSv1.1 TLSv1.2
-          ciphers: HIGH:!aNULL:!MD5
-          prefer_server_ciphers: true
-          session_cache: none
-          session_timeout: 5m
-          disable_session_tickets: false
-          trusted_cert: /etc/ssl/certs/root_CA_cert_plus_intermediates.crt
-          stapling: true
-          stapling_verify: true
-          buffer_size: 16k
-          ecdh_curve: auto
+
         sub_filter:
           # sub_filters: []
           last_modified: "off"
@@ -315,9 +317,12 @@ nginx_http_template:
 # Note - 'status' has been deprecated since NGINX Plus R13.
 # Default is false.
 nginx_status_enable: false
-nginx_status_location: /etc/nginx/conf.d/stub_status.conf
-nginx_status_port: 80
+nginx_status_template_file: http/status.conf.j2
+nginx_status_file_location: /etc/nginx/conf.d/status.conf
 nginx_status_log: false
+nginx_status_port: 80
+nginx_status_allow: 127.0.0.1
+nginx_status_deny: all
 
 # Enable NGINX Plus REST API, write access to the REST API, and NGINX Plus dashboard.
 # Requires NGINX Plus.
@@ -325,10 +330,14 @@ nginx_status_log: false
 nginx_rest_api_enable: false
 nginx_rest_api_template_file: http/api.conf.j2
 nginx_rest_api_file_location: /etc/nginx/conf.d/api.conf
-nginx_rest_api_port: 80
 nginx_rest_api_log: false
+nginx_rest_api_port: 80
 nginx_rest_api_write: false
 nginx_rest_api_dashboard: false
+nginx_status_rest_api_allow: 127.0.0.1
+nginx_status_rest_api_deny: all
+nginx_status_rest_api_dashboard_allow: 127.0.0.1
+nginx_status_rest_api_dashboard_deny: all
 
 # Enable creating dynamic templated NGINX stream configuration files.
 # Defaults will not produce a valid configuration. Instead they are meant to showcase
@@ -341,9 +350,24 @@ nginx_stream_template:
     conf_file_location: /etc/nginx/conf.d/stream/
     network_streams:
       default:
-        listen_address: localhost
-        listen_port: 80
-        udp_enable: false
+        listen:
+          listen_localhost:
+            ip: 0.0.0.0  # Wrap in square brackets for IPv6 addresses
+            port: 80
+            ssl: false
+            opts: []  # Listen opts like udp which will be added (ssl is automatically added if you specify 'ssl:').
+        ssl:
+          cert: /etc/ssl/certs/default.crt
+          key: /etc/ssl/private/default.key
+          dhparam: /etc/ssl/private/dh_param.pem
+          protocols: TLSv1 TLSv1.1 TLSv1.2
+          ciphers: HIGH:!aNULL:!MD5
+          prefer_server_ciphers: true
+          session_cache: none
+          session_timeout: 5m
+          disable_session_tickets: false
+          trusted_cert: /etc/ssl/certs/root_CA_cert_plus_intermediates.crt
+          ecdh_curve: auto
         include_files: []
         proxy_pass: backend
         proxy_timeout: 3s
