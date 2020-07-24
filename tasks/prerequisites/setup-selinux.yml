@@ -55,11 +55,7 @@
     proto: tcp
     setype: http_port_t
     state: present
-<<<<<<< HEAD
-  when: nginx_rest_api_port is defined"
-=======
   when: nginx_rest_api_port is defined
->>>>>>> upstream/master
 
 - name: "(Setup: SELinux: Ports) Allow Specific TCP Ports"
   seport:
