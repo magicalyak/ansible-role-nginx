@@ -90,17 +90,7 @@
     - nginx_amplify_api_key | length > 0
   tags: nginx_install_amplify
 
-<<<<<<< HEAD
-- include_tasks: "{{ role_path }}/tasks/unit/install-unit.yml"
-  when: nginx_unit_enable | bool
-  tags: nginx_install_unit
-
-- include_tasks: "{{ role_path }}/tasks/conf/logrotate.yml"
-  when: nginx_logrotate_conf_enable | bool
-  tags: nginx_logrotate_config
-=======
 - name: "(Install: All OSs) Install NGINX Unit"
   include_tasks: "{{ role_path }}/tasks/unit/install-unit.yml"
   when: nginx_unit_enable | bool
   tags: nginx_install_unit
->>>>>>> upstream/master
