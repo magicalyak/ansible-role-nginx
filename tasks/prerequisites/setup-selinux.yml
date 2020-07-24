@@ -4,8 +4,7 @@
     name: policycoreutils-python, setools
     state: present
   when:
-    - not ansible_os_family == "RedHat"
-    - not ansible_distribution_major_version == "8"
+    - ansible_os_family == "RedHat" and not ansible_distribution_major_version == "8"
 
 - name: "(Setup: SELinux) Install Required RHEL8 Dependencies"
   package:
