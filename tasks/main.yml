@@ -18,56 +18,6 @@
 - name: "(Install/Config: All OSs) Install and Configure NGINX"
   block:
 
-<<<<<<< HEAD
-    - include_tasks: "{{ role_path }}/tasks/opensource/install-oss.yml"
-      when: nginx_type == "opensource"
-      tags: nginx_install_oss
-
-    - include_tasks: "{{ role_path }}/tasks/plus/install-plus.yml"
-      when: nginx_type == "plus"
-      tags: nginx_install_plus
-
-    - include_tasks: "{{ role_path }}/tasks/conf/cleanup-config.yml"
-      when: nginx_cleanup_config | bool
-      tags: nginx_cleanup_config
-
-    - include_tasks: "{{ role_path }}/tasks/conf/upload-config.yml"
-      when: nginx_main_upload_enable
-            or nginx_http_upload_enable
-            or nginx_stream_upload_enable
-            or nginx_html_upload_enable
-            or nginx_ssl_upload_enable
-      tags: nginx_upload_config
-
-    - include_tasks: "{{ role_path }}/tasks/conf/template-config.yml"
-      when: nginx_main_template_enable
-            or nginx_http_template_enable
-            or nginx_stream_template_enable
-            or nginx_rest_api_enable
-      tags: nginx_template_config
-
-    - include_tasks: "{{ role_path }}/tasks/conf/setup-status.yml"
-      when: nginx_status_enable | bool
-      tags: nginx_setup_status
-
-    - include_tasks: "{{ role_path }}/tasks/modules/install-modules.yml"
-      when: true in nginx_modules.values()
-      tags: nginx_install_modules
-
-    - include_tasks: "{{ role_path }}/tasks/conf/debug-output.yml"
-      when: nginx_debug_output | bool
-      tags: nginx_debug_output
-
-    - include_tasks: "{{ role_path }}/tasks/plus/delete-license.yml"
-      when:
-        - nginx_type == "plus"
-        - nginx_delete_license
-      tags: nginx_delete_license
-
-  when: nginx_enable | bool
-
-- include_tasks: "{{ role_path }}/tasks/amplify/install-amplify.yml"
-=======
     - name: "(Install: All OSs) Install NGINX"
       block:
         - name: "(Install: All OSs) Install NGINX Open Source"
@@ -134,7 +84,6 @@
 
 - name: "(Install: All OSs) Install NGINX Amplify"
   include_tasks: "{{ role_path }}/tasks/amplify/install-amplify.yml"
->>>>>>> upstream/master
   when:
     - nginx_amplify_enable | bool
     - nginx_amplify_api_key is defined
